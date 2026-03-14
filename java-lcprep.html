@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Cheat Sheet</title>
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #1a1d27; --bg3: #22263a;
+    --border: #2e3452; --text: #e2e8f0; --muted: #8892b0;
+    --green: #4ade80; --blue: #60a5fa; --amber: #fbbf24;
+    --red: #f87171; --purple: #c084fc; --teal: #2dd4bf;
+    --code-bg: #0d1117;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; }
+  header { padding: 24px 24px 0; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  h1 { font-size: 20px; font-weight: 600; color: var(--blue); margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding-bottom: 12px; }
+  input[type=text] { flex: 1; min-width: 200px; padding: 7px 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px; }
+  input[type=text]:focus { outline: none; border-color: var(--blue); }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tab { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .tab:hover { color: var(--text); border-color: var(--blue); }
+  .tab.active { background: var(--blue); color: #0f1117; border-color: var(--blue); font-weight: 600; }
+  main { padding: 16px 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 12px; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; background: var(--bg3); user-select: none; }
+  .card-head:hover { background: #2a2f4a; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .card-meta { display: flex; align-items: center; gap: 6px; }
+  .badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  .badge-g { background: #14532d; color: var(--green); }
+  .badge-b { background: #1e3a5f; color: var(--blue); }
+  .badge-a { background: #431407; color: var(--amber); }
+  .badge-r { background: #450a0a; color: var(--red); }
+  .badge-p { background: #3b0764; color: var(--purple); }
+  .arrow { font-size: 10px; color: var(--muted); transition: transform .2s; }
+  .arrow.open { transform: rotate(180deg); }
+  .card-body { display: none; padding: 12px 14px; }
+  .card-body.open { display: block; }
+  .note { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.6; }
+  .note strong { color: var(--amber); }
+  .block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; position: relative; }
+  .block:last-child { margin-bottom: 0; }
+  .block-label { font-size: 10px; color: var(--teal); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 7px; }
+  pre { font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; color: var(--text); white-space: pre; }
+  .kw { color: var(--blue); }
+  .cm { color: #636e8a; font-style: italic; }
+  .copy-btn { position: absolute; top: 8px; right: 8px; font-size: 11px; padding: 3px 8px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; background: var(--bg3); color: var(--muted); transition: all .15s; }
+  .copy-btn:hover { color: var(--text); border-color: var(--blue); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .two-col .block { margin-bottom: 0; }
+  table.cxt { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.cxt th { text-align: left; color: var(--muted); padding: 5px 8px; border-bottom: 1px solid var(--border); font-size: 11px; }
+  table.cxt td { padding: 5px 8px; border-bottom: 1px solid #1e2235; font-family: 'Courier New', monospace; font-size: 12px; }
+  table.cxt tr:last-child td { border-bottom: none; }
+  table.cxt td:first-child { color: var(--blue); }
+  table.cxt td:nth-child(2) { color: var(--green); }
+  .pitfall { display: flex; gap: 8px; margin-bottom: 8px; }
+  .pi { color: var(--amber); font-size: 13px; flex-shrink: 0; }
+  .pt { font-size: 12.5px; line-height: 1.6; color: var(--text); }
+  .pt code { font-family: monospace; font-size: 11px; background: var(--bg3); padding: 1px 5px; border-radius: 3px; color: var(--amber); border: 1px solid var(--border); }
+  .no-results { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--muted); }
+  @media(max-width: 700px) { main { grid-template-columns: 1fr; } .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>☕ Java — Interview Reference</h1>
+  <div class="subtitle">Data structures · Algorithms · Patterns · Tricks. Click any card to expand.</div>
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search... (e.g. HashMap, BFS, sliding window, trie)" />
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-cat="all">All</button>
+      <button class="tab" data-cat="ds">Data structures</button>
+      <button class="tab" data-cat="algo">Algorithms</button>
+      <button class="tab" data-cat="pat">Patterns</button>
+      <button class="tab" data-cat="tip">Tricks &amp; tips</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+
+<!-- ===================== DATA STRUCTURES ===================== -->
+
+<div class="card" data-cat="ds" data-kw="arraylist arrays sort fill copy custom comparator list iterate">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">ArrayList &amp; Arrays</span>
+  <div class="card-meta"><span class="badge badge-g">O(1) get</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note">Declare as <code>List&lt;&gt;</code> interface. Prefer <code>int[]</code> over <code>List&lt;Integer&gt;</code> for speed — avoids boxing overhead.</div>
+<div class="two-col">
+<div class="block"><div class="block-label">Init &amp; array utils</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">List</span>&lt;Integer&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;();
+<span class="kw">int</span>[] arr = <span class="kw">new int</span>[5];
+Arrays.sort(arr);        <span class="cm">// O(n log n)</span>
+Arrays.fill(arr, 0);
+Arrays.copyOf(arr, n);
+Arrays.equals(a, b);
+Arrays.asList(1, 2, 3); <span class="cm">// fixed-size!</span></pre></div>
+<div class="block"><div class="block-label">Core ops</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>list.add(x);
+list.get(i);         <span class="cm">// O(1)</span>
+list.set(i, x);
+list.remove(i);      <span class="cm">// O(n) shifts</span>
+list.remove(Integer.valueOf(x));
+list.contains(x);    <span class="cm">// O(n)</span>
+list.size(); list.isEmpty();
+Collections.sort(list);
+Collections.reverse(list);</pre></div>
+</div>
+<div class="block"><div class="block-label">Custom sort (safe)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Sort 2D array by col 0</span>
+Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
+
+<span class="cm">// Safe comparator — avoids overflow</span>
+list.sort((a,b) -> Integer.compare(a,b));
+
+<span class="cm">// Multi-key: by length, then alphabetically</span>
+list.sort((a,b) -> a.length() != b.length() ?
+    a.length() - b.length() : a.compareTo(b));</pre></div>
+</div></div></div>
+
+<div class="card" data-cat="ds" data-kw="hashmap map frequency put get containskey entryset graph adjacency hashset treemap linkedhashmap computeifabsent merge">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">HashMap &amp; HashSet</span>
+  <div class="card-meta"><span class="badge badge-g">O(1) avg</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note"><strong>Most-used structure.</strong> Master <code>getOrDefault</code>, <code>merge</code>, <code>computeIfAbsent</code>, and entry iteration.</div>
+<div class="two-col">
+<div class="block"><div class="block-label">HashMap core</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">Map</span>&lt;Integer,Integer&gt; map = <span class="kw">new</span> HashMap&lt;&gt;();
+map.put(k, v);
+map.get(k);              <span class="cm">// null if absent</span>
+map.getOrDefault(k, 0);
+map.containsKey(k);
+map.remove(k);
+<span class="cm">// Frequency count — 2 ways, both valid</span>
+map.put(x, map.getOrDefault(x,0)+1);
+map.merge(x, 1, Integer::sum);</pre></div>
+<div class="block"><div class="block-label">Entry iteration</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// All entries (preferred)</span>
+<span class="kw">for</span>(Map.Entry&lt;Integer,Integer&gt; e
+    : map.entrySet()) {
+    e.getKey(); e.getValue();
+}
+<span class="cm">// Keys only / values only</span>
+<span class="kw">for</span>(<span class="kw">int</span> k : map.keySet())
+<span class="kw">for</span>(<span class="kw">int</span> v : map.values())</pre></div>
+</div>
+<div class="two-col">
+<div class="block"><div class="block-label">Graph adjacency list</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>Map&lt;Integer,List&lt;Integer&gt;&gt; g =
+    <span class="kw">new</span> HashMap&lt;&gt;();
+g.computeIfAbsent(u,
+    k -> <span class="kw">new</span> ArrayList&lt;&gt;()).add(v);</pre></div>
+<div class="block"><div class="block-label">HashSet</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">Set</span>&lt;Integer&gt; s = <span class="kw">new</span> HashSet&lt;&gt;();
+s.add(x); s.remove(x);
+s.contains(x);        <span class="cm">// O(1)</span>
+<span class="cm">// From list/array</span>
+<span class="kw">new</span> HashSet&lt;&gt;(Arrays.asList(arr));</pre></div>
+</div>
+<div class="note"><strong>TreeMap</strong> = sorted O(log n): <code>floorKey(k)</code>, <code>ceilingKey(k)</code>, <code>firstKey()</code>, <code>lastKey()</code> — great for range queries. <strong>LinkedHashMap</strong> = insertion-order. <strong>TreeSet</strong> = sorted set with <code>floor()</code>, <code>ceiling()</code>.</div>
+</div></div>
+
+<div class="card" data-cat="ds" data-kw="queue deque stack linkedlist offer poll peek fifo lifo arraydeque">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Queue, Deque &amp; Stack</span>
+  <div class="card-meta"><span class="badge badge-g">O(1) ops</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note"><strong>Interview rule:</strong> Use <code>ArrayDeque</code> for both stack and queue. Never use <code>Stack&lt;&gt;</code> class — it's synchronized and slow.</div>
+<div class="two-col">
+<div class="block"><div class="block-label">Queue (FIFO)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">Queue</span>&lt;Integer&gt; q =
+    <span class="kw">new</span> LinkedList&lt;&gt;();
+q.offer(x);  <span class="cm">// enqueue</span>
+q.poll();    <span class="cm">// dequeue, null if empty</span>
+q.peek();    <span class="cm">// front, null if empty</span>
+q.isEmpty(); q.size();</pre></div>
+<div class="block"><div class="block-label">Deque (stack + queue)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">Deque</span>&lt;Integer&gt; dq =
+    <span class="kw">new</span> ArrayDeque&lt;&gt;();
+dq.push(x);    <span class="cm">// addFirst</span>
+dq.pop();      <span class="cm">// removeFirst</span>
+dq.peek();     <span class="cm">// peekFirst</span>
+dq.addFirst(x); dq.addLast(x);
+dq.pollFirst(); dq.pollLast();
+dq.peekFirst(); dq.peekLast();</pre></div>
+</div>
+</div></div>
+
+<div class="card" data-cat="ds" data-kw="priorityqueue heap minheap maxheap offer poll top k frequent largest smallest">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">PriorityQueue (Heap)</span>
+  <div class="card-meta"><span class="badge badge-a">O(log n) push/pop</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note">Default = min-heap. Used for: Top K elements, K closest points, Dijkstra, scheduling, merge K lists.</div>
+<div class="two-col">
+<div class="block"><div class="block-label">Min / max heap</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Min-heap (default)</span>
+PriorityQueue&lt;Integer&gt; min =
+    <span class="kw">new</span> PriorityQueue&lt;&gt;();
+
+<span class="cm">// Max-heap</span>
+PriorityQueue&lt;Integer&gt; max =
+    <span class="kw">new</span> PriorityQueue&lt;&gt;((a,b)->b-a);
+
+min.offer(x);
+min.poll();   <span class="cm">// remove min, O(log n)</span>
+min.peek();   <span class="cm">// view min,  O(1)</span></pre></div>
+<div class="block"><div class="block-label">Top K pattern</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Min-heap of size K → K largest</span>
+PriorityQueue&lt;Integer&gt; pq =
+    <span class="kw">new</span> PriorityQueue&lt;&gt;();
+<span class="kw">for</span>(<span class="kw">int</span> n : nums) {
+    pq.offer(n);
+    <span class="kw">if</span>(pq.size() > k) pq.poll();
+}
+<span class="cm">// pq.peek() = kth largest</span></pre></div>
+</div>
+<div class="block"><div class="block-label">Heap of arrays / custom objects</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Sort by value at index 0 (e.g. distance)</span>
+PriorityQueue&lt;int[]&gt; pq =
+    <span class="kw">new</span> PriorityQueue&lt;&gt;((a,b)->a[0]-b[0]);
+pq.offer(<span class="kw">new int</span>[]{dist, node});</pre></div>
+</div></div>
+
+<div class="card" data-cat="ds" data-kw="trie prefix tree insert search startswith word autocomplete">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Trie (prefix tree)</span>
+  <div class="card-meta"><span class="badge badge-b">O(m) per op</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note">Build from scratch in interviews. Used for: autocomplete, word search II, prefix matching, IP routing.</div>
+<div class="block"><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">class</span> Trie {
+    Trie[] ch = <span class="kw">new</span> Trie[26];
+    <span class="kw">boolean</span> end;
+
+    <span class="kw">public void</span> insert(String word) {
+        Trie n = <span class="kw">this</span>;
+        <span class="kw">for</span>(<span class="kw">char</span> c : word.toCharArray()) {
+            <span class="kw">int</span> i = c - 'a';
+            <span class="kw">if</span>(n.ch[i] == <span class="kw">null</span>)
+                n.ch[i] = <span class="kw">new</span> Trie();
+            n = n.ch[i];
+        }
+        n.end = <span class="kw">true</span>;
+    }
+
+    <span class="kw">public boolean</span> search(String word) {
+        Trie n = get(word);
+        <span class="kw">return</span> n != <span class="kw">null</span> && n.end;
+    }
+
+    <span class="kw">public boolean</span> startsWith(String p) {
+        <span class="kw">return</span> get(p) != <span class="kw">null</span>;
+    }
+
+    <span class="kw">private</span> Trie get(String s) {
+        Trie n = <span class="kw">this</span>;
+        <span class="kw">for</span>(<span class="kw">char</span> c : s.toCharArray()) {
+            <span class="kw">if</span>((n = n.ch[c-'a']) == <span class="kw">null</span>)
+                <span class="kw">return null</span>;
+        }
+        <span class="kw">return</span> n;
+    }
+}</pre></div>
+</div></div>
+
+<!-- ===================== ALGORITHMS ===================== -->
+
+<div class="card" data-cat="algo" data-kw="binary search sorted left right mid boundary answer search space koko capacity">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Binary search</span>
+  <div class="card-meta"><span class="badge badge-g">O(log n)</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note"><strong>Safe mid:</strong> always <code>l + (r-l)/2</code> to prevent overflow. Know all three variants.</div>
+<div class="two-col">
+<div class="block"><div class="block-label">Exact match</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span> l=0, r=nums.length-1;
+<span class="kw">while</span>(l<=r) {
+    <span class="kw">int</span> mid=l+(r-l)/2;
+    <span class="kw">if</span>(nums[mid]==target) <span class="kw">return</span> mid;
+    <span class="kw">if</span>(nums[mid]&lt;target) l=mid+1;
+    <span class="kw">else</span> r=mid-1;
+}
+<span class="kw">return</span> -1;</pre></div>
+<div class="block"><div class="block-label">Left boundary (first ≥ target)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span> l=0, r=nums.length;
+<span class="kw">while</span>(l&lt;r) {
+    <span class="kw">int</span> mid=l+(r-l)/2;
+    <span class="kw">if</span>(nums[mid]&lt;target) l=mid+1;
+    <span class="kw">else</span> r=mid;
+}
+<span class="kw">return</span> l;</pre></div>
+</div>
+<div class="block"><div class="block-label">Binary search on answer (most powerful template)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// "Find min X such that condition(X) is true"</span>
+<span class="cm">// Used in: Koko bananas, split array, ship packages</span>
+<span class="kw">int</span> l=minVal, r=maxVal;
+<span class="kw">while</span>(l&lt;r) {
+    <span class="kw">int</span> mid=l+(r-l)/2;
+    <span class="kw">if</span>(condition(mid)) r=mid;
+    <span class="kw">else</span> l=mid+1;
+}
+<span class="kw">return</span> l;</pre></div>
+</div></div>
+
+<div class="card" data-cat="algo" data-kw="tree traversal inorder preorder postorder level order bfs dfs recursive iterative binary search tree">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Tree traversals</span>
+  <div class="card-meta"><span class="badge badge-g">O(n)</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="two-col">
+<div class="block"><div class="block-label">All 3 DFS recursive</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Inorder: L→Root→R → sorted BST output</span>
+<span class="kw">void</span> inorder(TreeNode n) {
+    <span class="kw">if</span>(n==<span class="kw">null</span>) <span class="kw">return</span>;
+    inorder(n.left);
+    process(n);
+    inorder(n.right);
+}
+<span class="cm">// Preorder: Root→L→R → serialize / copy</span>
+<span class="cm">// Postorder: L→R→Root → delete / heights</span></pre></div>
+<div class="block"><div class="block-label">Iterative inorder</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>Deque&lt;TreeNode&gt; st=<span class="kw">new</span> ArrayDeque&lt;&gt;();
+TreeNode cur=root;
+<span class="kw">while</span>(cur!=<span class="kw">null</span>||!st.isEmpty()) {
+    <span class="kw">while</span>(cur!=<span class="kw">null</span>) {
+        st.push(cur); cur=cur.left;
+    }
+    cur=st.pop();
+    process(cur);
+    cur=cur.right;
+}</pre></div>
+</div>
+<div class="block"><div class="block-label">BFS — level order (key: snapshot level size)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>Queue&lt;TreeNode&gt; q=<span class="kw">new</span> LinkedList&lt;&gt;();
+q.offer(root);
+<span class="kw">while</span>(!q.isEmpty()) {
+    <span class="kw">int</span> sz=q.size(); <span class="cm">// snapshot = exactly one level</span>
+    <span class="kw">for</span>(<span class="kw">int</span> i=0;i&lt;sz;i++) {
+        TreeNode n=q.poll();
+        <span class="kw">if</span>(n.left!=<span class="kw">null</span>) q.offer(n.left);
+        <span class="kw">if</span>(n.right!=<span class="kw">null</span>) q.offer(n.right);
+    }
+}</pre></div>
+</div></div>
+
+<div class="card" data-cat="algo" data-kw="graph bfs dfs grid visited topological sort cycle detection kahn directed undirected islands">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Graph — BFS / DFS / Topological sort</span>
+  <div class="card-meta"><span class="badge badge-g">O(V+E)</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="two-col">
+<div class="block"><div class="block-label">BFS (shortest path)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">boolean</span>[] vis=<span class="kw">new boolean</span>[n];
+Queue&lt;Integer&gt; q=<span class="kw">new</span> LinkedList&lt;&gt;();
+q.offer(start); vis[start]=<span class="kw">true</span>;
+<span class="kw">int</span> dist=0;
+<span class="kw">while</span>(!q.isEmpty()) {
+    <span class="kw">int</span> sz=q.size();
+    <span class="kw">for</span>(<span class="kw">int</span> i=0;i&lt;sz;i++) {
+        <span class="kw">int</span> node=q.poll();
+        <span class="kw">for</span>(<span class="kw">int</span> nei:g.get(node))
+            <span class="kw">if</span>(!vis[nei]){vis[nei]=<span class="kw">true</span>;q.offer(nei);}
+    }
+    dist++;
+}</pre></div>
+<div class="block"><div class="block-label">DFS grid (4 directions)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span>[][] dirs={{0,1},{0,-1},{1,0},{-1,0}};
+
+<span class="kw">void</span> dfs(<span class="kw">int</span>[][] g, <span class="kw">int</span> r, <span class="kw">int</span> c) {
+    g[r][c]=0; <span class="cm">// mark visited in-place</span>
+    <span class="kw">for</span>(<span class="kw">int</span>[] d:dirs) {
+        <span class="kw">int</span> nr=r+d[0], nc=c+d[1];
+        <span class="kw">if</span>(nr>=0&&nr&lt;g.length&&
+           nc>=0&&nc&lt;g[0].length&&
+           g[nr][nc]==1)
+            dfs(g,nr,nc);
+    }
+}</pre></div>
+</div>
+<div class="block"><div class="block-label">Topological sort — Kahn's BFS</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Build: adj list + indegree array</span>
+<span class="kw">int</span>[] indeg=<span class="kw">new int</span>[n];
+<span class="kw">for</span>(<span class="kw">int</span>[] e:edges){adj.get(e[0]).add(e[1]);indeg[e[1]]++;}
+
+Queue&lt;Integer&gt; q=<span class="kw">new</span> LinkedList&lt;&gt;();
+<span class="kw">for</span>(<span class="kw">int</span> i=0;i&lt;n;i++) <span class="kw">if</span>(indeg[i]==0) q.offer(i);
+
+List&lt;Integer&gt; order=<span class="kw">new</span> ArrayList&lt;&gt;();
+<span class="kw">while</span>(!q.isEmpty()){
+    <span class="kw">int</span> u=q.poll(); order.add(u);
+    <span class="kw">for</span>(<span class="kw">int</span> v:adj.get(u))
+        <span class="kw">if</span>(--indeg[v]==0) q.offer(v);
+}
+<span class="cm">// order.size()!=n means cycle exists</span></pre></div>
+</div></div>
+
+<div class="card" data-cat="algo" data-kw="union find disjoint set path compression rank connected components cycle redundant">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Union Find</span>
+  <div class="card-meta"><span class="badge badge-g">O(α(n)) ≈ O(1)</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note">Always use path compression + union by rank. Used for: connected components, cycle detection, redundant connections, number of provinces.</div>
+<div class="block"><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span>[] parent, rank;
+<span class="kw">void</span> init(<span class="kw">int</span> n){
+    parent=<span class="kw">new int</span>[n]; rank=<span class="kw">new int</span>[n];
+    <span class="kw">for</span>(<span class="kw">int</span> i=0;i&lt;n;i++) parent[i]=i;
+}
+<span class="kw">int</span> find(<span class="kw">int</span> x){          <span class="cm">// path compression</span>
+    <span class="kw">if</span>(parent[x]!=x) parent[x]=find(parent[x]);
+    <span class="kw">return</span> parent[x];
+}
+<span class="kw">boolean</span> union(<span class="kw">int</span> a, <span class="kw">int</span> b){
+    <span class="kw">int</span> pa=find(a), pb=find(b);
+    <span class="kw">if</span>(pa==pb) <span class="kw">return false</span>; <span class="cm">// already connected</span>
+    <span class="kw">if</span>(rank[pa]&lt;rank[pb]) parent[pa]=pb;
+    <span class="kw">else if</span>(rank[pa]>rank[pb]) parent[pb]=pa;
+    <span class="kw">else</span>{ parent[pb]=pa; rank[pa]++; }
+    <span class="kw">return true</span>;
+}</pre></div>
+</div></div>
+
+<!-- ===================== PATTERNS ===================== -->
+
+<div class="card" data-cat="pat" data-kw="sliding window two pointer substring variable fixed max min length valid window shrink expand">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Sliding window &amp; two pointers</span>
+  <div class="card-meta"><span class="badge badge-g">O(n)</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="two-col">
+<div class="block"><div class="block-label">Variable window</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span> left=0, res=0;
+<span class="kw">for</span>(<span class="kw">int</span> right=0; right&lt;n; right++) {
+    <span class="cm">// expand: include nums[right]</span>
+    <span class="kw">while</span>(invalid condition) {
+        <span class="cm">// shrink: remove nums[left]</span>
+        left++;
+    }
+    res=Math.max(res, right-left+1);
+}</pre></div>
+<div class="block"><div class="block-label">Fixed window</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Max sum subarray of size k</span>
+<span class="kw">int</span> sum=0, res=0;
+<span class="kw">for</span>(<span class="kw">int</span> i=0; i&lt;nums.length; i++) {
+    sum+=nums[i];
+    <span class="kw">if</span>(i>=k) sum-=nums[i-k];
+    <span class="kw">if</span>(i>=k-1) res=Math.max(res,sum);
+}</pre></div>
+</div>
+<div class="block"><div class="block-label">Two pointers (sorted array)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span> l=0, r=nums.length-1;
+<span class="kw">while</span>(l&lt;r) {
+    <span class="kw">int</span> s=nums[l]+nums[r];
+    <span class="kw">if</span>(s==target){ l++; r--; }
+    <span class="kw">else if</span>(s&lt;target) l++;
+    <span class="kw">else</span> r--;
+}</pre></div>
+</div></div>
+
+<div class="card" data-cat="pat" data-kw="backtracking permutation combination subset recursion choose explore unchoose pruning">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Backtracking</span>
+  <div class="card-meta"><span class="badge badge-r">O(n!) worst</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note"><strong>Pattern:</strong> choose → explore → unchoose. Always copy the list: <code>new ArrayList&lt;&gt;(cur)</code>.</div>
+<div class="block"><button class="copy-btn" onclick="cp(this)">copy</button><pre>List&lt;List&lt;Integer&gt;&gt; res=<span class="kw">new</span> ArrayList&lt;&gt;();
+
+<span class="kw">void</span> bt(<span class="kw">int</span> start, List&lt;Integer&gt; cur) {
+    <span class="kw">if</span>(baseCase) {
+        res.add(<span class="kw">new</span> ArrayList&lt;&gt;(cur)); <span class="cm">// ALWAYS copy!</span>
+        <span class="kw">return</span>;
+    }
+    <span class="kw">for</span>(<span class="kw">int</span> i=start; i&lt;nums.length; i++) {
+        <span class="kw">if</span>(skipCondition) <span class="kw">continue</span>; <span class="cm">// pruning</span>
+        cur.add(nums[i]);         <span class="cm">// choose</span>
+        bt(i+1, cur);             <span class="cm">// explore</span>
+        cur.remove(cur.size()-1); <span class="cm">// unchoose</span>
+    }
+}
+<span class="cm">// Permutations: use boolean[] used, pass i=0</span>
+<span class="cm">// Combinations: pass start index (i+1)</span>
+<span class="cm">// Subsets: add cur at EVERY level, no base case</span>
+<span class="cm">// Dedupe: sort first, skip i>start && nums[i]==nums[i-1]</span></pre></div>
+</div></div>
+
+<div class="card" data-cat="pat" data-kw="monotonic stack next greater smaller element temperature histogram rain water decreasing increasing">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Monotonic stack</span>
+  <div class="card-meta"><span class="badge badge-g">O(n)</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="note">Used for: next greater/smaller element, daily temperatures, largest rectangle in histogram, trapping rain water. Each element pushed/popped at most once → O(n).</div>
+<div class="two-col">
+<div class="block"><div class="block-label">Next greater (decreasing stack)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span>[] res=<span class="kw">new int</span>[n];
+Arrays.fill(res,-1);
+Deque&lt;Integer&gt; st=<span class="kw">new</span> ArrayDeque&lt;&gt;();
+<span class="kw">for</span>(<span class="kw">int</span> i=0;i&lt;n;i++){
+    <span class="kw">while</span>(!st.isEmpty()&&
+          nums[st.peek()]&lt;nums[i])
+        res[st.pop()]=nums[i];
+    st.push(i);
+}</pre></div>
+<div class="block"><div class="block-label">Next smaller (increasing stack)</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span>[] res=<span class="kw">new int</span>[n];
+Arrays.fill(res,-1);
+Deque&lt;Integer&gt; st=<span class="kw">new</span> ArrayDeque&lt;&gt;();
+<span class="kw">for</span>(<span class="kw">int</span> i=0;i&lt;n;i++){
+    <span class="kw">while</span>(!st.isEmpty()&&
+          nums[st.peek()]>nums[i])
+        res[st.pop()]=nums[i];
+    st.push(i);
+}</pre></div>
+</div>
+</div></div>
+
+<div class="card" data-cat="pat" data-kw="dynamic programming dp memoization tabulation kadane prefix sum knapsack subarray lcs edit distance coin change">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Dynamic programming patterns</span>
+  <div class="card-meta"><span class="badge badge-a">varies</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="two-col">
+<div class="block"><div class="block-label">Kadane's — max subarray</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span> cur=nums[0], best=nums[0];
+<span class="kw">for</span>(<span class="kw">int</span> i=1;i&lt;nums.length;i++){
+    cur=Math.max(nums[i], cur+nums[i]);
+    best=Math.max(best, cur);
+}
+<span class="kw">return</span> best;</pre></div>
+<div class="block"><div class="block-label">Prefix sum</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span>[] pre=<span class="kw">new int</span>[n+1];
+<span class="kw">for</span>(<span class="kw">int</span> i=0;i&lt;n;i++) pre[i+1]=pre[i]+nums[i];
+<span class="cm">// Range sum [l,r] in O(1):</span>
+<span class="kw">int</span> s=pre[r+1]-pre[l];
+<span class="cm">// Subarray sum=k → use HashMap</span>
+<span class="cm">// map[prefix]=count, look for prefix-k</span></pre></div>
+</div>
+<div class="two-col">
+<div class="block"><div class="block-label">2D DP — LCS</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span>[][] dp=<span class="kw">new int</span>[m+1][n+1];
+<span class="kw">for</span>(<span class="kw">int</span> i=1;i&lt;=m;i++)
+  <span class="kw">for</span>(<span class="kw">int</span> j=1;j&lt;=n;j++)
+    dp[i][j]= a[i-1]==b[j-1] ?
+        dp[i-1][j-1]+1 :
+        Math.max(dp[i-1][j],dp[i][j-1]);</pre></div>
+<div class="block"><div class="block-label">0/1 Knapsack</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span>[][] dp=<span class="kw">new int</span>[n+1][W+1];
+<span class="kw">for</span>(<span class="kw">int</span> i=1;i&lt;=n;i++)
+  <span class="kw">for</span>(<span class="kw">int</span> w=0;w&lt;=W;w++)
+    dp[i][w]= wt[i-1]&lt;=w ?
+        Math.max(dp[i-1][w],
+            dp[i-1][w-wt[i-1]]+val[i-1])
+        : dp[i-1][w];</pre></div>
+</div>
+<div class="block"><div class="block-label">Top-down memoization template</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>Map&lt;String, Integer&gt; memo=<span class="kw">new</span> HashMap&lt;&gt;();
+
+<span class="kw">int</span> dp(<span class="kw">int</span> i, <span class="kw">int</span> j) {
+    String key=i+","+j;
+    <span class="kw">if</span>(memo.containsKey(key)) <span class="kw">return</span> memo.get(key);
+    <span class="cm">// base cases</span>
+    <span class="kw">int</span> res=<span class="cm">/* recurrence */</span>;
+    memo.put(key, res);
+    <span class="kw">return</span> res;
+}</pre></div>
+</div></div>
+
+<div class="card" data-cat="pat" data-kw="floyd cycle detection slow fast pointer linked list tortoise hare duplicate">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Floyd's cycle detection (fast/slow)</span>
+  <div class="card-meta"><span class="badge badge-g">O(n) · O(1) space</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="block"><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Phase 1: detect cycle</span>
+ListNode slow=head, fast=head;
+<span class="kw">while</span>(fast!=<span class="kw">null</span>&&fast.next!=<span class="kw">null</span>){
+    slow=slow.next; fast=fast.next.next;
+    <span class="kw">if</span>(slow==fast) <span class="kw">break</span>;
+}
+<span class="kw">if</span>(fast==<span class="kw">null</span>||fast.next==<span class="kw">null</span>) <span class="kw">return null</span>; <span class="cm">// no cycle</span>
+
+<span class="cm">// Phase 2: find cycle entry node</span>
+slow=head;
+<span class="kw">while</span>(slow!=fast){
+    slow=slow.next; fast=fast.next;
+}
+<span class="kw">return</span> slow; <span class="cm">// cycle entry</span></pre></div>
+</div></div>
+
+<!-- ===================== TRICKS ===================== -->
+
+<div class="card" data-cat="tip" data-kw="string stringbuilder char int convert split trim manipulation reverse palindrome">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">String tricks</span>
+  <div class="card-meta"><span class="badge badge-b">essential</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="two-col">
+<div class="block"><div class="block-label">Core methods</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>s.length(); s.charAt(i);
+s.substring(a, b);  <span class="cm">// [a,b) exclusive</span>
+s.indexOf("x");     <span class="cm">// -1 if absent</span>
+s.equals(t);        <span class="cm">// NEVER use ==</span>
+s.contains("x"); s.replace("a","b");
+s.toCharArray(); s.split(" ");
+s.trim(); s.toLowerCase();
+String.valueOf(n);   <span class="cm">// int → String</span>
+Integer.parseInt(s); <span class="cm">// String → int</span></pre></div>
+<div class="block"><div class="block-label">Char conversions</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="kw">int</span> n=c-'0';          <span class="cm">// char → digit</span>
+<span class="kw">int</span> i=c-'a';          <span class="cm">// letter index 0-25</span>
+<span class="kw">char</span> c=(<span class="kw">char</span>)('a'+i); <span class="cm">// index → char</span>
+Character.isDigit(c);
+Character.isLetter(c);
+Character.toLowerCase(c);
+<span class="cm">// Char freq array (lowercase only)</span>
+<span class="kw">int</span>[] freq=<span class="kw">new int</span>[26];
+<span class="kw">for</span>(<span class="kw">char</span> c:s.toCharArray()) freq[c-'a']++;</pre></div>
+</div>
+<div class="block"><div class="block-label">StringBuilder — always in loops (String + is O(n²))</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>StringBuilder sb=<span class="kw">new</span> StringBuilder();
+sb.append("abc"); sb.append(c); <span class="cm">// O(1) amortized</span>
+sb.insert(0,"x"); sb.deleteCharAt(i);
+sb.reverse(); sb.length(); sb.toString();
+<span class="cm">// Reverse string</span>
+<span class="kw">new</span> StringBuilder(s).reverse().toString();
+<span class="cm">// Check palindrome</span>
+s.equals(<span class="kw">new</span> StringBuilder(s).reverse().toString());</pre></div>
+</div></div>
+
+<div class="card" data-cat="tip" data-kw="bit manipulation xor and or shift odd even power two count set bits bitmask subset">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Bit manipulation</span>
+  <div class="card-meta"><span class="badge badge-b">O(1)</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="two-col">
+<div class="block"><div class="block-label">Operations</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>x & 1          <span class="cm">// is odd?</span>
+x >> 1         <span class="cm">// divide by 2</span>
+x << 1         <span class="cm">// multiply by 2</span>
+x & (x-1)      <span class="cm">// clear lowest set bit</span>
+x | (1&lt;&lt;i)    <span class="cm">// set bit i</span>
+x & ~(1&lt;&lt;i)   <span class="cm">// clear bit i</span>
+x ^ (1&lt;&lt;i)    <span class="cm">// toggle bit i</span>
+(x>>i) & 1     <span class="cm">// get bit i</span>
+Integer.bitCount(x); <span class="cm">// count 1s</span></pre></div>
+<div class="block"><div class="block-label">Patterns</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// XOR: single number in pairs</span>
+<span class="kw">int</span> res=0;
+<span class="kw">for</span>(<span class="kw">int</span> n:nums) res^=n;
+
+<span class="cm">// Power of 2?</span>
+n>0 && (n&(n-1))==0
+
+<span class="cm">// Count set bits (Kernighan)</span>
+<span class="kw">int</span> cnt=0;
+<span class="kw">while</span>(n>0){n&=(n-1);cnt++;}
+
+<span class="cm">// Bitmask subsets</span>
+<span class="kw">for</span>(<span class="kw">int</span> s=mask;s>0;s=(s-1)&mask)</pre></div>
+</div>
+</div></div>
+
+<div class="card" data-cat="tip" data-kw="math overflow long integer max min mod negative divide modular arithmetic">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Math &amp; overflow gotchas</span>
+  <div class="card-meta"><span class="badge badge-b">memorize</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="two-col">
+<div class="block"><div class="block-label">Math methods</div><button class="copy-btn" onclick="cp(this)">copy</button><pre>Math.max(a,b); Math.min(a,b);
+Math.abs(x);
+Math.pow(x,y);     <span class="cm">// returns double</span>
+Math.sqrt(x);      <span class="cm">// returns double</span>
+Math.log(x);       <span class="cm">// natural log</span>
+Integer.MAX_VALUE; <span class="cm">// 2^31-1 = 2,147,483,647</span>
+Integer.MIN_VALUE; <span class="cm">// -2^31</span>
+Long.MAX_VALUE;    <span class="cm">// 2^63-1</span></pre></div>
+<div class="block"><div class="block-label">Overflow / mod traps</div><button class="copy-btn" onclick="cp(this)">copy</button><pre><span class="cm">// Overflow: cast before multiply!</span>
+<span class="kw">long</span> r=(<span class="kw">long</span>)a*b;
+
+<span class="cm">// Always non-negative mod</span>
+<span class="kw">int</span> r=((x%m)+m)%m;
+
+<span class="cm">// Safe comparator (a-b RISKY with negatives)</span>
+(a,b)->Integer.compare(a,b);
+
+<span class="cm">// Java integer division rounds toward 0</span>
+<span class="cm">// -7/2 == -3 (not -4 like floor)</span></pre></div>
+</div>
+</div></div>
+
+<div class="card" data-cat="tip" data-kw="complexity time space big o reference cheat sheet operations hashmap tree heap sort">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Complexity quick reference</span>
+  <div class="card-meta"><span class="badge badge-p">big-O</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<table class="cxt">
+<tr><th>Operation</th><th>Time</th><th>Notes</th></tr>
+<tr><td>HashMap get/put</td><td>O(1) avg</td><td>O(n) worst</td></tr>
+<tr><td>HashSet contains</td><td>O(1) avg</td><td></td></tr>
+<tr><td>TreeMap/TreeSet ops</td><td>O(log n)</td><td>sorted</td></tr>
+<tr><td>ArrayList get/set</td><td>O(1)</td><td></td></tr>
+<tr><td>ArrayList add (end)</td><td>O(1) amort</td><td></td></tr>
+<tr><td>ArrayList remove (mid)</td><td>O(n)</td><td>shifts</td></tr>
+<tr><td>LinkedList add/remove</td><td>O(1)</td><td>at iterator pos</td></tr>
+<tr><td>PriorityQueue offer/poll</td><td>O(log n)</td><td></td></tr>
+<tr><td>PriorityQueue peek</td><td>O(1)</td><td></td></tr>
+<tr><td>Binary search</td><td>O(log n)</td><td>sorted only</td></tr>
+<tr><td>Arrays.sort (primitives)</td><td>O(n log n)</td><td>dual-pivot QS</td></tr>
+<tr><td>Arrays.sort (objects)</td><td>O(n log n)</td><td>TimSort, stable</td></tr>
+<tr><td>DFS / BFS (graph)</td><td>O(V+E)</td><td></td></tr>
+<tr><td>DFS / BFS (tree)</td><td>O(n)</td><td></td></tr>
+<tr><td>Union Find</td><td>O(α(n))</td><td>near O(1)</td></tr>
+<tr><td>Trie insert/search</td><td>O(m)</td><td>m = word length</td></tr>
+<tr><td>String + in loop</td><td>O(n²)</td><td>use StringBuilder!</td></tr>
+</table>
+</div></div>
+
+<div class="card" data-cat="tip" data-kw="pitfalls bugs common mistakes null pointer integer compare concurrent modification backtracking copy reference equals">
+<div class="card-head" onclick="toggle(this)">
+  <span class="card-title">Common pitfalls &amp; interview mistakes</span>
+  <div class="card-meta"><span class="badge badge-r">watch out</span><span class="arrow">▼</span></div>
+</div>
+<div class="card-body">
+<div class="pitfall"><span class="pi">⚠</span><span class="pt">Never compare Strings with <code>==</code>. Use <code>.equals()</code>. Integer cache only covers -128 to 127, so <code>==</code> fails unpredictably.</span></div>
+<div class="pitfall"><span class="pi">⚠</span><span class="pt">Comparator <code>(a,b) -> a-b</code> overflows with negatives. Use <code>Integer.compare(a,b)</code> or <code>a &lt; b ? -1 : a > b ? 1 : 0</code>.</span></div>
+<div class="pitfall"><span class="pi">⚠</span><span class="pt">Backtracking: <code>res.add(cur)</code> adds a reference that gets cleared. Always write <code>res.add(new ArrayList&lt;&gt;(cur))</code>.</span></div>
+<div class="pitfall"><span class="pi">⚠</span><span class="pt"><code>ConcurrentModificationException</code>: don't remove from a list while iterating. Collect indices first, or use <code>Iterator.remove()</code>.</span></div>
+<div class="pitfall"><span class="pi">⚠</span><span class="pt">Integer overflow in multiplication: cast first → <code>(long)a * b</code>. Without cast, overflow happens before the assignment.</span></div>
+<div class="pitfall"><span class="pi">⚠</span><span class="pt">Binary search: mixing <code>l &lt;= r</code> and <code>l &lt; r</code> causes infinite loops or missed values. Pick one invariant and stick to it.</span></div>
+<div class="pitfall"><span class="pi">⚠</span><span class="pt"><code>map.get(key)</code> returns <code>null</code> when key is absent. Auto-unboxing to <code>int</code> throws NPE. Always use <code>getOrDefault(k, 0)</code>.</span></div>
+<div class="pitfall"><span class="pi">⚠</span><span class="pt">Always check <code>node != null</code> before <code>.val</code>, <code>.next</code>, <code>.left</code>/<code>.right</code>. Check <code>fast.next != null</code> too in Floyd's.</span></div>
+<div class="pitfall"><span class="pi">⚠</span><span class="pt">Queue/Deque: <code>poll()</code> and <code>peek()</code> return <code>null</code> on empty. <code>pop()</code> and <code>remove()</code> throw exceptions. Prefer <code>poll()</code>/<code>peek()</code>.</span></div>
+</div></div>
+
+<div id="no-results" class="no-results" style="display:none;">No sections match — try a different search term.</div>
+</main>
+
+<script>
+function toggle(h) {
+  const b=h.nextElementSibling, a=h.querySelector('.arrow');
+  const o=b.classList.contains('open');
+  b.classList.toggle('open',!o);
+  a.classList.toggle('open',!o);
+}
+function cp(btn) {
+  const txt=btn.parentElement.querySelector('pre').innerText;
+  navigator.clipboard.writeText(txt).then(()=>{
+    btn.textContent='copied!';
+    setTimeout(()=>btn.textContent='copy',1500);
+  });
+}
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    filter(t.dataset.cat, document.getElementById('search').value.toLowerCase());
+  });
+});
+document.getElementById('search').addEventListener('input',e=>{
+  const c=document.querySelector('.tab.active').dataset.cat;
+  filter(c, e.target.value.toLowerCase());
+});
+function filter(cat, q) {
+  let v=0;
+  document.querySelectorAll('.card').forEach(c=>{
+    const cm=cat==='all'||c.dataset.cat===cat;
+    const kw=(c.dataset.kw||'')+(c.querySelector('.card-title')?.textContent||'');
+    const qm=!q||kw.toLowerCase().includes(q);
+    c.style.display=(cm&&qm)?'':'none';
+    if(cm&&qm) v++;
+  });
+  document.getElementById('no-results').style.display=v?'none':'';
+}
+</script>
+</body>
+</html>
